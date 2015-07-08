@@ -1,4 +1,6 @@
-package net.lojika.tag.tracking;
+package net.lojika.tag.tracking.data;
+
+import net.lojika.tag.tracking.constant.Command;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,6 +12,17 @@ import java.util.Arrays;
  */
 public class LocationTrackingDataManagerImpl implements LocationTrackingDataManager {
     private int receiveWindow;
+
+    private static LocationTrackingDataManager locationTrackingDataManager;
+
+    public static LocationTrackingDataManager getLocationTrackingDataManager(int receiveWindow) {
+        if (locationTrackingDataManager == null) {
+            locationTrackingDataManager = new LocationTrackingDataManagerImpl(receiveWindow);
+            return locationTrackingDataManager;
+        } else {
+            return locationTrackingDataManager;
+        }
+    }
 
     public LocationTrackingDataManagerImpl(int receiveWindow) {
         this.receiveWindow = receiveWindow;
@@ -33,8 +46,8 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
 
                 byte[] latBytes = Arrays.copyOfRange(data, 50, 58);
                 byte[] lonBytes = Arrays.copyOfRange(data, 58, 66);
-                double lat = ByteBuffer.wrap(latBytes).getDouble();
-                double lon = ByteBuffer.wrap(lonBytes).getDouble();
+                float lat = ByteBuffer.wrap(latBytes).getFloat();
+                float lon = ByteBuffer.wrap(lonBytes).getFloat();
 
                 locationTrackingData.setLat(lat);
                 locationTrackingData.setLon(lon);
@@ -51,15 +64,14 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
         byte[] tokenBytes = token.getBytes();
         byte[] tripIdBytes = tripId.getBytes();
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(errorCodeByte);
-        byteArrayOutputStream.write(commandByte);
-        byteArrayOutputStream.write(tokenBytes);
-        byteArrayOutputStream.write(tripIdBytes);
+        byte[] data = new byte[receiveWindow];
+        ByteBuffer.wrap(data)
+                .put(errorCodeByte)
+                .put(commandByte)
+                .put(tokenBytes)
+                .put(tripIdBytes);
 
-
-        return byteArrayOutputStream.toByteArray();
-
+        return data;
     }
 
     public byte[] makeLocationData(String userId, String tripId, double lat, double lon) throws IOException {

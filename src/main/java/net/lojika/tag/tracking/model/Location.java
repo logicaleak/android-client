@@ -6,10 +6,10 @@ package net.lojika.tag.tracking.model;
 public class Location {
     private String tripId;
     private String userId;
-    private double lat;
-    private double lng;
+    private float lat;
+    private float lng;
 
-    public Location(String tripId, String userId, double lat, double lng) {
+    public Location(String tripId, String userId, float lat, float lng) {
         this.tripId = tripId;
         this.userId = userId;
         this.lat = lat;
@@ -32,19 +32,19 @@ public class Location {
         this.userId = userId;
     }
 
-    public double getLat() {
+    public float getLat() {
         return lat;
     }
 
-    public void setLat(double lat) {
+    public void setLat(float lat) {
         this.lat = lat;
     }
 
-    public double getLng() {
+    public float getLng() {
         return lng;
     }
 
-    public void setLng(double lng) {
+    public void setLng(float lng) {
         this.lng = lng;
     }
 }

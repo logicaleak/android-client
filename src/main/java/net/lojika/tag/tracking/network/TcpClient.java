@@ -1,4 +1,4 @@
-package net.lojika.tag.tracking;
+package net.lojika.tag.tracking.network;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,25 +10,17 @@ import java.net.UnknownHostException;
  * Created by ozum on 08.07.2015.
  */
 public class TcpClient {
-    private String address;
-    private int port;
-    private boolean connected;
     private Socket socket;
 
     private int receiveWindow;
 
-    private byte[] readData;
 
-    public TcpClient(String address, int port, int receiveWindow) throws UnknownHostException, IOException {
-        this.address = address;
-        this.port = port;
+
+    public TcpClient(String address, int port, int receiveWindow) throws IOException {
         this.receiveWindow = receiveWindow;
 
-        this.connected = false;
         this.socket = new Socket(address, port);
-        this.connected = true;
-
-        readData = new byte[receiveWindow];
+        System.out.println("Connection established");
     }
 
     public void send(byte[] data) throws IOException {
@@ -38,10 +30,19 @@ public class TcpClient {
 
     public byte[] read() throws IOException {
         InputStream inputStream = socket.getInputStream();
+
+        byte[] readData = new byte[receiveWindow];
+
         //Blocks
         inputStream.read(readData, 0, receiveWindow);
 
-        //Assume it is returned by copy
         return readData;
+    }
+
+    public void close() throws IOException {
+        if (socket.isConnected()) {
+            socket.close();
+        }
+
     }
 }

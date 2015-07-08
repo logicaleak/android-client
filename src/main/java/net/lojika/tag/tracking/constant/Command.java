@@ -1,4 +1,4 @@
-package net.lojika.tag.tracking;
+package net.lojika.tag.tracking.constant;
 
 /**
  * Created by ozum on 08.07.2015.

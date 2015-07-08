@@ -1,3 +1,7 @@
+import net.lojika.tag.tracking.output.LocationTrackingClient;
+
+import java.util.Arrays;
+
 /**
  * Created by ozum on 08.07.2015.
  */
@@ -31,12 +35,18 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        B b = new B(5);
-        A oldA = b.getA();
-        System.out.println("oldA" + oldA.a);
+        LocationTrackingClient locationTrackingClient = new LocationTrackingImpl();
+        locationTrackingClient.connectAndSubscribe("127.0.0.1", 5001, "aaaaaaaaaaaaaaaaaaaaaaaa", "tttttttttttttttt", "bbbbbbbbbbbbbbbbbbbbbbbb");
 
-        b.setAinA(10);
+        Object object = new Object();
+        try {
 
-        System.out.println("newA" + oldA.a);
+            synchronized (object) {
+
+                object.wait();
+            }
+        } catch (Exception e) {
+
+        }
     }
 }

@@ -1,4 +1,4 @@
-package net.lojika.tag.tracking;
+package net.lojika.tag.tracking.data;
 
 import java.io.IOException;
 
