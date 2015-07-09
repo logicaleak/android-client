@@ -34,7 +34,11 @@ public class TcpClient {
         byte[] readData = new byte[receiveWindow];
 
         //Blocks
-        inputStream.read(readData, 0, receiveWindow);
+        int result = inputStream.read(readData, 0, receiveWindow);
+
+        if (result == -1) {
+            throw new IOException("Connection Closed");
+        }
 
         return readData;
     }

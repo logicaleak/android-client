@@ -33,7 +33,12 @@ abstract public class LocationTrackingClient {
     }
 
     public void connectAndSubscribe(String host, int port, String userId, String token, String tripId) {
-        ProcessManager.spawnProcess(() -> sharedConnectionData.setConnected(false));
+        ProcessManager.spawnProcess(new Runnable() {
+            @Override
+            public void run() {
+                sharedConnectionData.setConnected(false);
+            }
+        });
 
         MainNetworkProcess mainNetworkProcess = new MainNetworkProcess(host, port, 100, this, userId, token, tripId, sharedConnectionData);
         GenericThread mainNetworkThread = new GenericThread(mainNetworkProcess);
@@ -48,28 +53,44 @@ abstract public class LocationTrackingClient {
 
     public void endConnection() {
 
-        ProcessManager.spawnProcess(() -> {
-            try {
-                TcpClient tcpClient = this.sharedConnectionData.getTcpClient();
-                tcpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                onError(ErrorCodes.NOT_CONNECTED, "Error in endConnection, not connected");
+        ProcessManager.spawnProcess(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TcpClient tcpClient = sharedConnectionData.getTcpClient();
+                    if (tcpClient != null) {
+
+                        tcpClient.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    onError(ErrorCodes.NOT_CONNECTED, "Error in endConnection, not connected");
+                }
             }
         });
 
 
     }
 
-    public void sendLocation(float lat, float lng) {
+    public void sendLocation(final double lat, final double lng) {
 
-        ProcessManager.spawnProcess(() -> {
-            try {
-                TcpClient tcpClient = this.sharedConnectionData.getTcpClient();
-                locationTrackingDataManager.makeLocationData(this.sharedConnectionData.getUserId(), this.sharedConnectionData.getTripId(), lat, lng);
-            } catch (IOException e) {
-                e.printStackTrace();
-                onError(ErrorCodes.NOT_CONNECTED, "Error in sendLocation, not connected");
+        ProcessManager.spawnProcess(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TcpClient tcpClient = sharedConnectionData.getTcpClient();
+                    synchronized (sharedConnectionData) {
+                        if (tcpClient != null) {
+                            byte[] data =
+                                    locationTrackingDataManager.makeLocationData(sharedConnectionData.getUserId(), sharedConnectionData.getTripId(), lat, lng);
+                            tcpClient.send(data);
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    onError(ErrorCodes.NOT_CONNECTED, "Error in sendLocation, not connected");
+                }
             }
         });
 

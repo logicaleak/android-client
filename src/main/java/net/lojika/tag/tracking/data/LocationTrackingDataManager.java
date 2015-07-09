@@ -7,6 +7,6 @@ import java.io.IOException;
  */
 public interface LocationTrackingDataManager {
     LocationTrackingData resolve(byte[] data);
-    byte[] makeStartOperationData(String token, String tripId) throws IOException;
+    byte[] makeStartOperationData(String userId, String token, String tripId) throws IOException;
     byte[] makeLocationData(String userId, String tripId, double lat, double lon) throws IOException;
 }

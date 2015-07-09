@@ -58,6 +58,10 @@ public class ReceiveProcess extends GenericRunnable implements Runnable {
                                 );
                                 locationTrackingClient.onLocationArrive(location);
                                 break;
+                            case Command.CONNECTION_SUCCESSFULLY_ENDED:
+                                System.out.println("Connection Ended");
+                                locationTrackingClient.onConnectionSuccessfullyEnded();
+                                break;
                         }
                     } else {
                         switch (locationTrackingData.getCommand()) {
@@ -76,6 +80,8 @@ public class ReceiveProcess extends GenericRunnable implements Runnable {
                 } catch (IOException e) {
                     e.printStackTrace();
                     locationTrackingClient.onError(locationTrackingData.getErrorCode(), "Could not read");
+                    //End receive cycle
+                    return;
                 }
             }
 

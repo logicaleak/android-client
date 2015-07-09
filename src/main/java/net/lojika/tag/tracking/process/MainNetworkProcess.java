@@ -48,7 +48,7 @@ public class MainNetworkProcess extends GenericRunnable implements Runnable {
             this.sharedConnectionData.setTcpClient(new TcpClient(this.address, this.port, this.receiveWindow));
             TcpClient tcpClient = this.sharedConnectionData.getTcpClient();
 
-            byte[] startOperationBytes = locationTrackingDataManager.makeStartOperationData(token, tripId);
+            byte[] startOperationBytes = locationTrackingDataManager.makeStartOperationData(userId, token, tripId);
             tcpClient.send(startOperationBytes);
 
             this.receiveProcess = new ReceiveProcess(tcpClient, this.locationTrackingClient, this.receiveWindow, this.sharedConnectionData);

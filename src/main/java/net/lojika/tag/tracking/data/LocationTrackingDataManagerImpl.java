@@ -5,6 +5,7 @@ import net.lojika.tag.tracking.constant.Command;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 
 /**
@@ -46,8 +47,16 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
 
                 byte[] latBytes = Arrays.copyOfRange(data, 50, 58);
                 byte[] lonBytes = Arrays.copyOfRange(data, 58, 66);
-                float lat = ByteBuffer.wrap(latBytes).getFloat();
-                float lon = ByteBuffer.wrap(lonBytes).getFloat();
+
+                ByteBuffer bb = ByteBuffer.wrap(latBytes);
+                bb.order(ByteOrder.LITTLE_ENDIAN);
+                bb.rewind();
+                double lat = bb.getDouble();
+
+                bb = ByteBuffer.wrap(lonBytes);
+                bb.order(ByteOrder.LITTLE_ENDIAN);
+                bb.rewind();
+                double lon = bb.getDouble();
 
                 locationTrackingData.setLat(lat);
                 locationTrackingData.setLon(lon);
@@ -58,16 +67,18 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
         return locationTrackingData;
     }
 
-    public byte[] makeStartOperationData(String token, String tripId) throws IOException {
+    public byte[] makeStartOperationData(String userId, String token, String tripId) throws IOException {
         byte errorCodeByte = 1;
         byte commandByte = 1;
         byte[] tokenBytes = token.getBytes();
         byte[] tripIdBytes = tripId.getBytes();
+        byte[] userIdBytes = userId.getBytes();
 
         byte[] data = new byte[receiveWindow];
         ByteBuffer.wrap(data)
                 .put(errorCodeByte)
                 .put(commandByte)
+                .put(userIdBytes)
                 .put(tokenBytes)
                 .put(tripIdBytes);
 
@@ -78,23 +89,34 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
         byte errorCodeByte = 1;
         byte commandByte = 4;
 
-        byte[] latBytes = new byte[8];
-        byte[] lonBytes = new byte[8];
 
-        ByteBuffer.wrap(latBytes).putDouble(lat);
-        ByteBuffer.wrap(lonBytes).putDouble(lon);
+        ByteBuffer bb = ByteBuffer.allocate(8).putDouble(lat);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        bb.rewind();
+        double littleEndianLat = bb.getDouble();
+        bb = ByteBuffer.allocate(8).putDouble(littleEndianLat);
+        byte[] latBytes = bb.array();
+
+        bb = ByteBuffer.allocate(8).putDouble(lon);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        bb.rewind();
+        double littleEndianLon = bb.getDouble();
+        bb = ByteBuffer.allocate(8).putDouble(littleEndianLon);
+        byte[] lonBytes = bb.array();
 
         byte[] userIdBytes = userId.getBytes();
         byte[] tripIdBytes = tripId.getBytes();
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(errorCodeByte);
-        byteArrayOutputStream.write(commandByte);
-        byteArrayOutputStream.write(userIdBytes);
-        byteArrayOutputStream.write(tripIdBytes);
-        byteArrayOutputStream.write(latBytes);
-        byteArrayOutputStream.write(lonBytes);
+        byte[] data = new byte[receiveWindow];
 
-        return byteArrayOutputStream.toByteArray();
+        ByteBuffer.wrap(data)
+                .put(errorCodeByte)
+                .put(commandByte)
+                .put(userIdBytes)
+                .put(tripIdBytes)
+                .put(latBytes)
+                .put(lonBytes);
+
+        return data;
     }
 }
