@@ -7,6 +7,8 @@ import net.lojika.tag.tracking.network.TcpClient;
 import net.lojika.tag.tracking.output.LocationTrackingClient;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 
 /**
  * Created by ozum on 08.07.2015.
@@ -24,12 +26,15 @@ public class MainNetworkProcess extends GenericRunnable implements Runnable {
     private String tripId;
     private String token;
 
+    private int retries;
+    private int timeout;
+
     private ReceiveProcess receiveProcess;
 
     private SharedConnectionData sharedConnectionData;
 
     public MainNetworkProcess(String address, int port, int receiveWindow, LocationTrackingClient locationTrackingClient,
-                              String userId, String token, String tripId, SharedConnectionData sharedConnectionData) {
+                              String userId, String token, String tripId, SharedConnectionData sharedConnectionData, int retries, int timeout) {
         this.address = address;
         this.port = port;
         this.receiveWindow = receiveWindow;
@@ -40,20 +45,30 @@ public class MainNetworkProcess extends GenericRunnable implements Runnable {
         this.userId = userId;
         this.tripId = tripId;
         this.token = token;
+
+        this.retries = retries;
+        this.timeout = timeout;
     }
 
     public void run() {
         try {
             System.out.println("Connection is being started");
-            this.sharedConnectionData.setTcpClient(new TcpClient(this.address, this.port, this.receiveWindow));
+            while(retries > 0) {
+                try {
+                    this.sharedConnectionData.setTcpClient(new TcpClient(this.address, this.port, this.receiveWindow, timeout));
+                    break;
+                } catch (SocketTimeoutException e) {
+                    this.retries = this.retries - 1;
+                }
+            }
             TcpClient tcpClient = this.sharedConnectionData.getTcpClient();
 
             byte[] startOperationBytes = locationTrackingDataManager.makeStartOperationData(userId, token, tripId);
             tcpClient.send(startOperationBytes);
 
             this.receiveProcess = new ReceiveProcess(tcpClient, this.locationTrackingClient, this.receiveWindow, this.sharedConnectionData);
-            GenericThread receiveThread = new GenericThread(this.receiveProcess);
-            receiveThread.start();
+            sharedConnectionData.receiveThread = new GenericThread(this.receiveProcess);
+            sharedConnectionData.receiveThread.start();
 
         } catch (IOException e) {
             //print it ?

@@ -79,10 +79,16 @@ public class ReceiveProcess extends GenericRunnable implements Runnable {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    locationTrackingClient.onError(locationTrackingData.getErrorCode(), "Could not read");
+
+                    if (!Thread.interrupted()) {
+                        locationTrackingClient.onConnectionLost();
+                    }
+
                     //End receive cycle
                     return;
                 }
+            } else { //If interrupted break the receive cycle
+                break;
             }
 
         }

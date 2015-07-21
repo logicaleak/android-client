@@ -13,6 +13,10 @@ public class SharedConnectionData {
 
     private TcpClient tcpClient;
 
+    public volatile GenericThread receiveThread;
+
+    
+
     public synchronized void setTcpClient(TcpClient tcpClient) {
         this.tcpClient = tcpClient;
     }

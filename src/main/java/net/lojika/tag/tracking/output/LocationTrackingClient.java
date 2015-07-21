@@ -32,7 +32,7 @@ abstract public class LocationTrackingClient {
         return sharedConnectionData.getTripId();
     }
 
-    public void connectAndSubscribe(String host, int port, String userId, String token, String tripId) {
+    public void connectAndSubscribe(String host, int port, String userId, String token, String tripId, int retries, int timeout) {
         ProcessManager.spawnProcess(new Runnable() {
             @Override
             public void run() {
@@ -40,7 +40,7 @@ abstract public class LocationTrackingClient {
             }
         });
 
-        MainNetworkProcess mainNetworkProcess = new MainNetworkProcess(host, port, 100, this, userId, token, tripId, sharedConnectionData);
+        MainNetworkProcess mainNetworkProcess = new MainNetworkProcess(host, port, 100, this, userId, token, tripId, sharedConnectionData, retries, timeout);
         GenericThread mainNetworkThread = new GenericThread(mainNetworkProcess);
         mainNetworkThread.start();
 
@@ -59,7 +59,7 @@ abstract public class LocationTrackingClient {
                 try {
                     TcpClient tcpClient = sharedConnectionData.getTcpClient();
                     if (tcpClient != null) {
-
+                        LocationTrackingClient.this.sharedConnectionData.receiveThread.interrupt();
                         tcpClient.close();
                     }
                 } catch (IOException e) {

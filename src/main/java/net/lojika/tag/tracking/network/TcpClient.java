@@ -3,6 +3,7 @@ package net.lojika.tag.tracking.network;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -16,10 +17,11 @@ public class TcpClient {
 
 
 
-    public TcpClient(String address, int port, int receiveWindow) throws IOException {
+    public TcpClient(String address, int port, int receiveWindow, int connection_timeout) throws IOException {
         this.receiveWindow = receiveWindow;
 
-        this.socket = new Socket(address, port);
+        this.socket = new Socket();
+        socket.connect(new InetSocketAddress(address, port), connection_timeout);
         System.out.println("Connection established");
     }
 
