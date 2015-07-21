@@ -14,6 +14,7 @@ public class SharedConnectionData {
     private TcpClient tcpClient;
 
     public volatile GenericThread receiveThread;
+    public volatile GenericThread mainNetworkThread;
 
     
 

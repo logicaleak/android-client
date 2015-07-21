@@ -40,10 +40,10 @@ abstract public class LocationTrackingClient {
             }
         });
 
-        MainNetworkProcess mainNetworkProcess = new MainNetworkProcess(host, port, 100, this, userId, token, tripId, sharedConnectionData, retries, timeout);
-        GenericThread mainNetworkThread = new GenericThread(mainNetworkProcess);
-        mainNetworkThread.start();
 
+        MainNetworkProcess mainNetworkProcess = new MainNetworkProcess(host, port, 100, this, userId, token, tripId, sharedConnectionData, retries, timeout);
+        this.sharedConnectionData.mainNetworkThread = new GenericThread(mainNetworkProcess);
+        this.sharedConnectionData.mainNetworkThread.start();
 
         this.sharedConnectionData.setTripId(tripId);
         this.sharedConnectionData.setToken(token);

@@ -66,6 +66,11 @@ public class MainNetworkProcess extends GenericRunnable implements Runnable {
             byte[] startOperationBytes = locationTrackingDataManager.makeStartOperationData(userId, token, tripId);
             tcpClient.send(startOperationBytes);
 
+            //If a pre created receiveThread exists, interrupt it. No need for it to work...
+            if (this.sharedConnectionData.receiveThread != null) {
+                this.sharedConnectionData.receiveThread.interrupt();
+            }
+
             this.receiveProcess = new ReceiveProcess(tcpClient, this.locationTrackingClient, this.receiveWindow, this.sharedConnectionData);
             sharedConnectionData.receiveThread = new GenericThread(this.receiveProcess);
             sharedConnectionData.receiveThread.start();
