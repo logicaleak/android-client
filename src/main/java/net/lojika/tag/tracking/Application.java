@@ -8,30 +8,16 @@ import java.util.List;
  */
 public class Application {
     public static void main(String[] args) {
+        String a = null;
+        System.out.println(a);
+
         List<LocationImpl> list = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 1; i++) {
             LocationImpl location = new LocationImpl();
-            location.connectAndSubscribe("127.0.0.1", 5001, "aaaaaaaaaaaaaaaaaaaaaaaa", "tttttttttttttttt", "bbbbbbbbbbbbbbbbbbbbbbbb");
-            list.add(location);
+            location.connectAndSubscribe("dev.lojika.net", 5002, "55a54e4d0cf23052e530c31e", "efb60586-9f55-463d-ae42-4a508de0e882", "55af7e330cf2e5b476c59ac3",3 , 5000);
+
         }
 
-        for (int i = 0; i < 50; i++) {
-            LocationImpl location = new LocationImpl();
-            location.connectAndSubscribe("127.0.0.1", 5001, "aaaaaaaaaaaaaaaaaaaaaaa1", "tttttttttttttttt", "cccccccccccccccccccccccc");
-            list.add(location);
-        }
-
-        for (int i = 0; i < 50; i++) {
-            LocationImpl location = new LocationImpl();
-            location.connectAndSubscribe("127.0.0.1", 5001, "aaaaaaaaaaaaaaaaaaaaaaa2", "tttttttttttttttt", "dddddddddddddddddddddddd");
-            list.add(location);
-        }
-
-        for (int i = 0; i < 50; i++) {
-            LocationImpl location = new LocationImpl();
-            location.connectAndSubscribe("127.0.0.1", 5001, "aaaaaaaaaaaaaaaaaaaaaaa3", "tttttttttttttttt", "eeeeeeeeeeeeeeeeeeeeeeee");
-            list.add(location);
-        }
 
     }
 }

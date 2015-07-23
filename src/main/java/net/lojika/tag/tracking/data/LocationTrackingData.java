@@ -11,7 +11,16 @@ public class LocationTrackingData {
     private String tripId;
     private double lat;
     private double lon;
+    private int time;
 
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
 
     public int getErrorCode() {
         return errorCode;

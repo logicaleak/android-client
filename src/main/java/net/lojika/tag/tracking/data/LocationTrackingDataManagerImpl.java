@@ -48,6 +48,8 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
                 byte[] latBytes = Arrays.copyOfRange(data, 50, 58);
                 byte[] lonBytes = Arrays.copyOfRange(data, 58, 66);
 
+                byte[] timeBytes = Arrays.copyOfRange(data, 66, 70);
+
                 ByteBuffer bb = ByteBuffer.wrap(latBytes);
                 bb.order(ByteOrder.LITTLE_ENDIAN);
                 bb.rewind();
@@ -58,6 +60,10 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
                 bb.rewind();
                 double lon = bb.getDouble();
 
+                bb = ByteBuffer.wrap(timeBytes);
+                int time = bb.getInt();
+
+                locationTrackingData.setTime(time);
                 locationTrackingData.setLat(lat);
                 locationTrackingData.setLon(lon);
                 locationTrackingData.setUserId(userId);

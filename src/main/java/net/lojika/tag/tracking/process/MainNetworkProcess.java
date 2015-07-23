@@ -55,9 +55,12 @@ public class MainNetworkProcess extends GenericRunnable implements Runnable {
             System.out.println("Connection is being started");
             while(retries > 0) {
                 try {
+                    System.out.println("trying");
                     this.sharedConnectionData.setTcpClient(new TcpClient(this.address, this.port, this.receiveWindow, timeout));
+
                     break;
                 } catch (SocketTimeoutException e) {
+                    System.out.println("timeout!");
                     this.retries = this.retries - 1;
                 }
             }

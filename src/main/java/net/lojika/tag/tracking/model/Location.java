@@ -8,12 +8,22 @@ public class Location {
     private String userId;
     private double lat;
     private double lng;
+    private int time;
 
-    public Location(String tripId, String userId, double lat, double lng) {
+    public Location(String tripId, String userId, double lat, double lng, int time) {
         this.tripId = tripId;
         this.userId = userId;
         this.lat = lat;
         this.lng = lng;
+        this.time = time;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 
     public String getTripId() {

@@ -19,9 +19,16 @@ public class LocationImpl extends LocationTrackingClient {
             @Override
             public void run() {
                 try {
+                    int counter = 0;
                     while (true) {
-                        Thread.sleep(1000);
+                        counter++;
+                        Thread.sleep(200);
                         sendLocation(30d, 30d);
+                        if (counter == 5) {
+                            endConnection();
+                            break;
+                        }
+
                     }
                 } catch (Exception e) {
 

@@ -54,7 +54,8 @@ public class ReceiveProcess extends GenericRunnable implements Runnable {
                                         locationTrackingData.getTripId(),
                                         locationTrackingData.getUserId(),
                                         locationTrackingData.getLat(),
-                                        locationTrackingData.getLon()
+                                        locationTrackingData.getLon(),
+                                        locationTrackingData.getTime()
                                 );
                                 locationTrackingClient.onLocationArrive(location);
                                 break;
