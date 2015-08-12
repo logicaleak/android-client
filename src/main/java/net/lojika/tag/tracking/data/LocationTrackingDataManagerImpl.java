@@ -61,6 +61,8 @@ public class LocationTrackingDataManagerImpl implements LocationTrackingDataMana
                 double lon = bb.getDouble();
 
                 bb = ByteBuffer.wrap(timeBytes);
+                bb.order(ByteOrder.LITTLE_ENDIAN);
+                bb.rewind();
                 int time = bb.getInt();
 
                 locationTrackingData.setTime(time);
