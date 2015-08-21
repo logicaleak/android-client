@@ -46,7 +46,12 @@ public class MainNetworkProcess extends GenericRunnable implements Runnable {
         this.tripId = tripId;
         this.token = token;
 
-        this.retries = retries;
+        if (retries < 1) {
+            this.retries = 1;
+        } else {
+            this.retries = retries;
+
+        }
         this.timeout = timeout;
     }
 
@@ -64,6 +69,13 @@ public class MainNetworkProcess extends GenericRunnable implements Runnable {
                     this.retries = this.retries - 1;
                 }
             }
+
+            //Connection failed
+            if (retries == 0) {
+                locationTrackingClient.onConnectionFailed(ErrorCodes.CONNECTION_FAILED, "Initial connection has failed");
+                return;
+            }
+
             TcpClient tcpClient = this.sharedConnectionData.getTcpClient();
 
             byte[] startOperationBytes = locationTrackingDataManager.makeStartOperationData(userId, token, tripId);
